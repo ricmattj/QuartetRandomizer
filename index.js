@@ -1,130 +1,139 @@
 var dataAccess = require('./dataAccess');
 
-const basses = [
+const basses_master = [
+    'Andy Richards',
+    'David Speidel',
+    'Jeff Bemis',
+    'Martin Wissenberg',
+    'Stanley Kleja',
+    'Robert Preece',
+    'Ben Wanggaard',
+    'Keith Troxler',
+    'Charles Buch-Hammonds',
     'Peter Bennett',
-	'David Casperson',
-    'Ralph Cobb',
-	'Jerald Forbes',
-	'Stan Kleja',
     'Jim Moris',
-	'Bob Preece',
-	'Andrew Richards',
-	'Duane Scott',
-    'Smyte Smithlin',
-	'David Speidel',
-	'Ben Wanggaard',
-	'Steve Zorn',
-    'Mike Stehlik'
-] 
-
-const leads = [
-    'Benjamin Brekke',
-    'Nic Cols',
-	'Robert Hoversten',
-	'Wendell Keith',
-    'Carl Johnson',
-	'Tony Lapakko',
-	'Joe Larson',
-    'Peter Milan',
-	'Heath Mueller',
-	'Alan Parker',
-	'Paul Roberts',
-	'Donny Rose',
-    'TJ Striblen',
-	'John Von Haden',
-	'Conrad Ward',
-    'Kevin White',
-    'Alan Meebus'
+    'Steve Zorn',
+    'David Casperson',
 ]
 
-const baris = [
-    'Kirk Benson',
-	'Merlin Friesen',
-    'Ben Hancock',
-    'Randy Haafke',
-    'Darrel Herschberger',
-	'Rodney Johnson',
-	'Michael Kaas',
-	'Chad Knipfer',
+const leads_master = [
+    'Heath Mueller',
+    'Joseph Larson',
+    'Shawn Hunter',
+    'Harly Lentz',
+    'Ben Brekke',
+    'Alan Parker',
+    'Paul Roberts',
+    'Ed Obermeyer-Kolb',
+    'Mark Wegner',
+    'Rob Hoversten',
+    'John White',
+    'Wendell Keith',
+    'Oliver Nicholson',
+    'Tony Mason',
+    'Conrad Ward',
+    'Andy Ries',
+    'Tony Lapakko'
+]
+
+const baris_master = [
+    'Matt Richards',
+    'Nathan Wilbur',
     'Anthony Koenig',
-	'David Lapakko',
-	'Harley Lentz',
-	'Mike Olson',
-	'Ron Reimer',
-	'Matt Richards',
-	'Nathan Willbur'
+    'TJ Striblen',
+    'Kirk Benson',
+    'Scott Zoellner',
+    'Merlin Friesen',
+    'David Lapakko',
+    'Mike Olson',
+    'JT Hernson',
+    'Mark Bloomquist',
+    'Chad Knipfer'
 ];
 
-const tenors = [
-    'David Bechard',
-	'Poul-Erik Binderup',
-    'Trevor Carlson',
-	'Alan Coombs',
-    'Gail Crowe',
-	'Shel Givens',
-	'Philip Hedtke',
-    'Kevin Huyck',
-	'Randy Rogers',
-	'Jeff Schulz',
-	'Michael Tate',
-    'Rick Van Gomple',
-	'Ken Wentworth',
-    'James Maclean'
+const tenors_master = [
+    'Randy Rogers',
+    'Ken Wentworth',
+    'Barry Hu',
+    'Ben Miller',
+    'Alan Coombs',
+    'Niel Johnson',
+    'Dave Bechard',
+    'Jeff Schulz',
+    'Steve Grady',
+    'Norm Running'
 ];
 
-const songs = [
-    'If the Devil Danced',
-    'All of Me',
-    'If I Only Had a Brain',
-    'That\'s Life',
-    "I'm Beginning to See The Light",
-    "Two of a Kind, Working' on a Full House",
-    "I Can Dream, Can't I?",
-    "You're a Heavenly Thing",
-    "Mr. Success",
-    "Wonderful One"
+const songs_master = [
+   "Ain't That a Kick in the Head",
+   "Everyone's Wrong But Me",
+   "May I Never Love Again",
+   "Just One Of Those Things",
+   "I Can't Believe That You're In Love With Me",
+   "Kalamazoo",
+   "Roses of Picardy",
+   "Good News",
+   "Fun and Fancy Free",
+   "Burnin' the Roadhouse Down" 
 ];
 
-const getMaxCount = () => {
-    let maxCount = basses.length;
-    if(leads.length > maxCount) {
-        maxCount = leads.length;
-    }
-    if(baris.length > maxCount) {
-        maxCount = baris.length;
-    }
-    if(tenors.length > maxCount) {
-        maxCount = tenors.length;
+const quartetCount = Math.max(
+    basses_master.length,
+    baris_master.length,
+    leads_master.length,
+    tenors_master.length
+);
+
+console.log(`Total Quartets: ${quartetCount}`);
+
+let basses = [...basses_master];
+let baris = [...baris_master];
+let leads = [...leads_master];
+let tenors = [...tenors_master];
+let songs = [...songs_master];
+
+let quartets = [];
+
+function randomize() {
+    for (let i = 0; i < quartetCount; i++) {
+        const bass = getRandomElement(basses, basses_master);
+        basses = bass.newList;
+        const bari = getRandomElement(baris, baris_master);
+        baris = bari.newList;
+        const lead = getRandomElement(leads, leads_master);
+        leads = lead.newList;
+        const tenor = getRandomElement(tenors, tenors_master);
+        tenors = tenor.newList;
+        const song = getRandomElement(songs, songs_master);
+        songs = song.newList;
+
+        quartets.push({
+            quartet: i + 1,
+            bass: bass.element,
+            bari: bari.element,
+            lead: lead.element,
+            tenor: tenor.element,
+            song: song.element,
+        });
     }
 
-    return maxCount;
+    return quartets;
 }
 
-/**
- * Shuffles array in place. ES6 version
- * @param {Array} a items The array containing the items.
- */
-const shuffle = (a) => {
-    for (let i = a.length; i; i--) {
-        let j = Math.floor(Math.random() * i);
-        [a[i - 1], a[j]] = [a[j], a[i - 1]];
-    }
-}
-
-const getValue = (arr, index) => {
-    if(index > arr.length - 1) {
-        return arr[index % arr.length];
+function getRandomElement(elements, master_elements) {
+    if (elements.length === 1) {
+        return {
+            element: elements[0],
+            newList: [...master_elements],
+        };
     } else {
-        return arr[index];
+        const chosenElement =
+            elements[Math.round(Math.random() * (elements.length - 1))];
+        return {
+            element: chosenElement,
+            newList: elements.filter((e) => e != chosenElement),
+        };
     }
-}
-
-const shuffleAll = () => {
-    shuffle(basses);
-    shuffle(leads);
-    shuffle(tenors);
-    shuffle(baris);
-    shuffle(songs);
 }
 
 var express = require('express')
@@ -134,83 +143,60 @@ app.set('port', (process.env.PORT || 9000));
 
 app.get('/counts', (req, res) => {
     res.send({
-        basses: basses.length,
-        leads: leads.length,
-        baris: baris.length,
-        tenors: tenors.length
+        basses: basses_master.length,
+        leads: leads_master.length,
+        baris: baris_master.length,
+        tenors: tenors_master.length
     })
 });
 
 app.get('/basses', (req, res) => {
-    dataAccess.getBasses();
-    res.send(basses);
+    res.send(basses_master);
 });
 
 app.get('/bassesRandom', (req, res) => {
-    shuffle(basses);
-    res.send(basses[0]);
+    res.send(getRandomElement(basses_master, basses_master).element);
 });
 
-app.get('/leads', (req, res) => {
-    res.send(leads);
-});
+app.get("/leads", (req, res) => {
+    res.send(leads_master);
+})
 
 app.get('/leadsRandom', (req, res) => {
-    shuffle(leads);
-    res.send(leads[0]);
+    res.send(getRandomElement(leads_master, leads_master).element);
 });
 
 app.get('/baris', (req, res) => {
-    res.send(baris);
-});
+    res.send(baris_master);
+})
 
 app.get('/barisRandom', (req, res) => {
-    shuffle(baris);
-    res.send(baris[0]);
+    res.send(getRandomElement(baris_master, baris_master).element);
 });
 
 app.get('/tenors', (req, res) => {
-    res.send(tenors);
-});
+    res.send(tenors_master);
+})
 
 app.get('/tenorsRandom', (req, res) => {
-    shuffle(tenors);
-    res.send(tenors[0]);
+    res.send(getRandomElement(tenors_master, tenors_master).element);
 });
 
 app.get('/songsRandom', (req, res) => {
-    shuffle(songs);
-    res.send(songs[0]);
+    res.send(getRandomElement(songs_master, songs_master).element);
 });
 
 app.get('/getRandomQuartets', function (req, res) {
-    shuffleAll();
-
-    let quartets = [];
-    for ( let i = 0; i < getMaxCount(); i++) {
-        let quartet = {
-            bass: getValue(basses, i),
-            lead: getValue(leads, i),
-            bari: getValue(baris, i),
-            tenor: getValue(tenors, i),
-            song: getValue(songs, i)
-        }
-
-        quartets.push(quartet);
-    }
-
-    res.send(quartets);
+    res.send(randomize());
 });
 
-app.get('/getSingleRandomQuartet', function(req, res) {
-    shuffleAll();
-
+app.get('/getSingleRandomQuartet', function (req, res) {
     let quartet = {
-        bass: getValue(basses, 0),
-        lead: getValue(leads, 0),
-        bari: getValue(baris, 0),
-        tenor: getValue(tenors, 0),
-        song: getValue(songs, 0) + '<br>' + getValue(songs, 1)
+        bass: getRandomElement(basses_master, basses_master).element,
+        lead: getRandomElement(leads_master, leads_master).element,
+        bari: getRandomElement(baris_master, baris_master).element,
+        tenor: getRandomElement(tenors_master, tenors_master).element,
+        song: getRandomElement(songs_master, songs_master).element + '<br>' + getRandomElement(songs_master, songs_master).element
     };
 
     res.send(quartet);
@@ -218,6 +204,6 @@ app.get('/getSingleRandomQuartet', function(req, res) {
 
 app.use(express.static('public'));
 
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
+app.listen(app.get('port'), function () {
+    console.log('Node app is running on port', app.get('port'));
 });
