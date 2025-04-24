@@ -1,3 +1,5 @@
+let quartets;
+
 $(document).ready(function(){
     $.get('/counts', function(countObj) {
         var output = '<tr>' +
@@ -36,8 +38,10 @@ $(document).ready(function(){
 
     $('#randomize').click(function() {
         $('#print').prop('disabled', false);
+        $('#copy').prop('disabled', false);
         $("#resultBody").html('');
-        $.get('/getRandomQuartets', function(quartets) {
+        $.get('/getRandomQuartets', function(q) {
+            quartets = q;
             let number = 1;
             quartets.forEach(function(quartet){
                 $('#resultBody').append('<tr class="quartet-row">' +
@@ -85,4 +89,12 @@ $(document).ready(function(){
             $('.song').toggle();
         }
     });
+
+    $('#copy').click(() => {
+        const mapped = quartets.map(quartet => {
+            return `,${quartet.bass},${quartet.lead},${quartet.bari},${quartet.tenor},${quartet.song}\n`
+        }).reduce((a,b) => a+b);
+
+        console.log(`Quartet,Bass,Lead,Bari,Tenor,Song\n${mapped}`);
+    })
 });

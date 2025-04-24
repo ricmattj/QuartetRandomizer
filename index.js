@@ -8,7 +8,6 @@ const basses_master = [
     'Stanley Kleja',
     'Robert Preece',
     'Ben Wanggaard',
-    'Keith Troxler',
     'Charles Buch-Hammonds',
     'Peter Bennett',
     'Jim Moris',
